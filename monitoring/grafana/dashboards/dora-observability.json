@@ -1,0 +1,12 @@
+{
+  "title": "CI/CD Observability and DORA Metrics",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {"type": "timeseries", "title": "Kafka Throughput", "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8}, "targets": []},
+    {"type": "timeseries", "title": "Flink Processing Latency", "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8}, "targets": []},
+    {"type": "stat", "title": "DORA Metrics", "gridPos": {"x": 0, "y": 8, "w": 12, "h": 6}, "targets": []},
+    {"type": "bargauge", "title": "Alert Volume", "gridPos": {"x": 12, "y": 8, "w": 12, "h": 6}, "targets": []}
+  ]
+}
+

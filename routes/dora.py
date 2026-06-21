@@ -6,6 +6,7 @@ from flask_login import login_required
 from extensions import db
 from models.pipeline_event import PipelineEvent
 from services.dora_metrics import all_dora_metrics
+from services.event_schema import CICDEvent
 
 dora_bp = Blueprint('dora', __name__, url_prefix='/dora')
 
@@ -74,6 +75,19 @@ def ingest_event():
     if not data:
         abort(400, description='JSON body required.')
 
+    if data.get('event_timestamp'):
+        stream_event = CICDEvent.from_dict(data)
+        data = {
+            'event_id': stream_event.event_id,
+            'pipeline_id': stream_event.pipeline_id,
+            'repository_id': stream_event.repository_id,
+            'run_id': stream_event.run_id or stream_event.event_id,
+            'event_type': stream_event.event_type,
+            'status': stream_event.status,
+            'commit_hash': stream_event.commit_hash,
+            'event_time': stream_event.event_timestamp.isoformat(),
+        }
+
     required = ('pipeline_id', 'run_id', 'event_type')
     missing  = [f for f in required if not data.get(f)]
     if missing:
@@ -94,8 +108,11 @@ def ingest_event():
 
     event = PipelineEvent(
         pipeline_id = data['pipeline_id'],
+        event_id    = data.get('event_id'),
+        repository_id = data.get('repository_id'),
         run_id      = data['run_id'],
         event_type  = data['event_type'],
+        status      = data.get('status', 'SUCCESS'),
         commit_hash = data.get('commit_hash'),
         event_time  = event_time,
     )
@@ -123,6 +140,10 @@ def ingest_bulk_events():
     created = []
     for idx, item in enumerate(data):
         if item.get('event_type') not in PipelineEvent.EVENT_TYPES:
+            item = CICDEvent.from_dict(item).to_dict()
+            item['event_time'] = item.pop('event_timestamp')
+            item['event_type'] = CICDEvent.from_dict(item).event_type
+        if item.get('event_type') not in PipelineEvent.EVENT_TYPES:
             abort(400, description=f'Item {idx}: unknown event_type "{item.get("event_type")}"')
 
         event_time = datetime.utcnow()
@@ -134,8 +155,11 @@ def ingest_bulk_events():
 
         event = PipelineEvent(
             pipeline_id = item.get('pipeline_id', ''),
+            event_id    = item.get('event_id'),
+            repository_id = item.get('repository_id'),
             run_id      = item.get('run_id', ''),
             event_type  = item['event_type'],
+            status      = item.get('status', 'SUCCESS'),
             commit_hash = item.get('commit_hash'),
             event_time  = event_time,
         )

@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  background: #f6f8fb;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.toolbar {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.content {
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: 24px;
+}
+
+.metric-card,
+.chart-panel {
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.chart-panel {
+  margin-top: 16px;
+}
+
+.alert-row {
+  margin-top: 12px;
+}
+
