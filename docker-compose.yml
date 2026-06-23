@@ -88,6 +88,22 @@ services:
     environment:
       VITE_API_BASE_URL: http://localhost:5000
 
+  jenkins:
+    build:
+      context: ./jenkins
+    ports:
+      - "8082:8080"
+      - "50000:50000"
+    environment:
+      JAVA_OPTS: -Djenkins.install.runSetupWizard=false
+      JENKINS_ADMIN_USER: ${JENKINS_ADMIN_USER:-adithyanPrabhakaran.ie@gmail.com}
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:-Adirepo@0720}
+      JENKINS_PIPELINE_JOB_NAME: smart-incident-platform-ci
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - ./jenkins/init.groovy.d:/var/jenkins_home/init.groovy.d:ro
+      - ./:/workspace/source:ro
+
   prometheus:
     image: prom/prometheus:v2.52.0
     ports:
@@ -106,3 +122,4 @@ services:
 volumes:
   postgres_data:
   grafana_data:
+  jenkins_home:

@@ -29,8 +29,31 @@ Services:
 - React dashboard: http://localhost:3000
 - Kafka UI: http://localhost:8080
 - Flink UI: http://localhost:8081
+- Jenkins: http://localhost:8082
 - Prometheus: http://localhost:9090
 - Grafana: http://localhost:3001
+
+## Jenkins Pipeline
+
+Jenkins is included in Docker Compose and seeds a pipeline job named
+`smart-incident-platform-ci` from the repository `Jenkinsfile`.
+
+Default login:
+
+- Username: `adithyanPrabhakaran.ie@gmail.com`
+- Password: `Adirepo@0720`
+
+To override the login without editing `docker-compose.yml`, set these
+environment variables before starting the stack:
+
+```bash
+JENKINS_ADMIN_USER=adithyanPrabhakaran.ie@gmail.com
+JENKINS_ADMIN_PASSWORD=your-secure-password
+docker-compose up -d --build jenkins
+```
+
+The pipeline copies the local source mounted at `/workspace/source`, runs the
+backend pytest suite, then builds the React frontend.
 
 ## Kafka Topic Commands
 
@@ -108,4 +131,3 @@ alert rules, event-schema normalization, and prediction output bounds.
 - `monitoring/` Prometheus and Grafana assets.
 - `docs/architecture.md` architecture diagram.
 - `docs/performance_evaluation_report.md` evaluation template.
-
