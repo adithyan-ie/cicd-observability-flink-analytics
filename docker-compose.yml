@@ -66,28 +66,6 @@ services:
         jobmanager.rpc.address: flink-jobmanager
         taskmanager.numberOfTaskSlots: 4
 
-  backend:
-    build: .
-    ports:
-      - "5000:5000"
-    depends_on:
-      - postgres
-      - kafka
-    environment:
-      DATABASE_URL: postgresql://observability:observability@postgres:5432/observability
-      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      SECRET_KEY: change-me
-
-  frontend:
-    build:
-      context: ./frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    environment:
-      VITE_API_BASE_URL: http://localhost:5000
-
   jenkins:
     build:
       context: ./jenkins
@@ -103,6 +81,7 @@ services:
       - jenkins_home:/var/jenkins_home
       - ./jenkins/init.groovy.d:/var/jenkins_home/init.groovy.d:ro
       - ./:/workspace/source:ro
+      - ../incident-management-app:/workspace/incident-management-app:ro
 
   prometheus:
     image: prom/prometheus:v2.52.0
@@ -110,6 +89,8 @@ services:
       - "9090:9090"
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   grafana:
     image: grafana/grafana:11.0.0

@@ -15,8 +15,9 @@ Measured dimensions:
 Run:
 
 ```bash
-python ../event-log-generation/kafka/event_generator/generator.py --count 100000
+python kafka/event_generator/generator.py --count 100000
 python benchmark/benchmark_runner.py --iterations 10
 ```
 
 Results are written to `benchmark/performance_report.json`.
+

@@ -2,13 +2,12 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: backend
+  - job_name: incident-management-api
     static_configs:
-      - targets: ["backend:5000"]
+      - targets: ["host.docker.internal:5000"]
   - job_name: kafka
     static_configs:
       - targets: ["kafka:9092"]
   - job_name: flink
     static_configs:
       - targets: ["flink-jobmanager:8081"]
-

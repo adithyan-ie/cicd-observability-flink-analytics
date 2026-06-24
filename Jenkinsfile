@@ -15,7 +15,7 @@ pipeline {
         stage('Prepare Source') {
             steps {
                 sh '''
-                    cp -R /workspace/source/. .
+                    cp -R /workspace/incident-management-app/. .
                     rm -rf .git
                 '''
             }

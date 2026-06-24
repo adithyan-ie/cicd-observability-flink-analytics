@@ -1,37 +1,16 @@
 #!/usr/bin/env bash
-# Quick Start Script - Run DORA Metrics Dashboard with Sample Data
-# Usage: bash quickstart.sh
+set -euo pipefail
 
-echo "🚀 Smart Incident Platform - DORA Metrics Quick Start"
-echo "======================================================"
-echo ""
-
-# Check if running from correct directory
-if [ ! -f "app.py" ]; then
-    echo "❌ Error: Run this script from smart-incident-platform/ directory"
-    exit 1
-fi
-
-echo "📦 Installing dependencies..."
-pip install -q -r requirements.txt
-
-echo "📝 Generating sample CI/CD pipeline data..."
-python sample_data.py
+echo "Starting CI/CD pipeline platform"
+docker compose up -d --build
 
 echo ""
-echo "✅ Setup complete!"
+echo "Services:"
+echo "  Kafka UI:   http://localhost:8080"
+echo "  Flink UI:   http://localhost:8081"
+echo "  Jenkins:    http://localhost:8082"
+echo "  Prometheus: http://localhost:9090"
+echo "  Grafana:    http://localhost:3001"
 echo ""
-echo "Now run: python app.py"
-echo ""
-echo "Then visit:"
-echo "  • http://localhost:5000/dora          (DORA Metrics Dashboard)"
-echo "  • http://localhost:5000/               (Main Dashboard)"
-echo "  • http://localhost:5000/incidents      (Incidents)"
-echo ""
-echo "📚 For more info, see:"
-echo "  • DORA_README.md    - Complete documentation"
-echo "  • API_DOCS.md       - API reference and integration examples"
-echo ""
-echo "🧪 Test the API:"
-echo "  python test_client.py success my-pipeline run-001"
-echo "  python test_client.py metrics"
+echo "Generate events:"
+echo "  python kafka/event_generator/generator.py --count 100000 --to-kafka --rate 1000"
