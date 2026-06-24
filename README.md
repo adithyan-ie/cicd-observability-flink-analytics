@@ -1,21 +1,13 @@
 # Real-Time CI/CD Observability and Predictive Analytics Framework
 
-Production-oriented demo platform for CI/CD observability using Kafka, Flink,
-DORA metrics, predictive deployment risk scoring, PostgreSQL, React, Prometheus,
-and Grafana.
+Observability platform for CI/CD pipelines using Kafka, Flink, DORA metrics,
+predictive deployment risk scoring, PostgreSQL, React, Prometheus, and Grafana.
 
-## What Is Included
+The synthetic event log generator has been extracted into the sibling project:
 
-- Synthetic CI/CD event generator with delayed and out-of-order events.
-- Kafka topics for `cicd-events`, `dora-metrics`, and `alerts`.
-- PyFlink streaming job with event-time processing, sliding windows, tumbling-ready SQL, and five-minute watermark lateness.
-- DORA metric calculators for deployment frequency, lead time, change failure rate, and MTTR.
-- Alert rules for high deployment risk, recovery SLA breaches, and pipeline slowdown.
-- RandomForest-compatible predictive analytics module with deterministic fallback.
-- Flask observability API plus the existing incident/DORA dashboard.
-- React + Material UI + Recharts dashboard.
-- PostgreSQL schema, Dockerfile, Docker Compose, Prometheus, and Grafana dashboard stub.
-- Batch baseline and benchmark runner with latency, throughput, accuracy, and predictive effectiveness reporting.
+```text
+../event-log-generation
+```
 
 ## Start The Stack
 
@@ -33,28 +25,6 @@ Services:
 - Prometheus: http://localhost:9090
 - Grafana: http://localhost:3001
 
-## Jenkins Pipeline
-
-Jenkins is included in Docker Compose and seeds a pipeline job named
-`smart-incident-platform-ci` from the repository `Jenkinsfile`.
-
-Default login:
-
-- Username: `adithyanPrabhakaran.ie@gmail.com`
-- Password: `Adirepo@0720`
-
-To override the login without editing `docker-compose.yml`, set these
-environment variables before starting the stack:
-
-```bash
-JENKINS_ADMIN_USER=adithyanPrabhakaran.ie@gmail.com
-JENKINS_ADMIN_PASSWORD=your-secure-password
-docker-compose up -d --build jenkins
-```
-
-The pipeline copies the local source mounted at `/workspace/source`, runs the
-backend pytest suite, then builds the React frontend.
-
 ## Kafka Topic Commands
 
 ```bash
@@ -65,28 +35,10 @@ docker-compose exec kafka kafka-topics --bootstrap-server kafka:29092 --list
 docker-compose exec kafka kafka-console-consumer --bootstrap-server kafka:29092 --topic cicd-events --from-beginning
 ```
 
-## Generate Events
+## Event Source
 
-Write 100,000 events to a JSONL sample file:
-
-```bash
-python kafka/event_generator/generator.py --count 100000
-```
-
-Produce directly to Kafka:
-
-```bash
-python kafka/event_generator/generator.py --count 100000 --to-kafka --rate 1000
-```
-
-## Run Benchmarks
-
-```bash
-python benchmark/batch_processing.py --input database/sample_cicd_events.jsonl
-python benchmark/benchmark_runner.py --input database/sample_cicd_events.jsonl --iterations 10
-```
-
-Reports are written under `benchmark/`.
+Use the separate `event-log-generation` project to generate JSONL samples or
+publish synthetic CI/CD events to the `cicd-events` Kafka topic.
 
 ## API Endpoints
 
@@ -96,32 +48,14 @@ Reports are written under `benchmark/`.
 - `GET /api/observability/alerts`
 - `GET /api/observability/prediction`
 
-Example event:
-
-```json
-{
-  "event_id": "evt-001",
-  "pipeline_id": "pipeline_001",
-  "repository_id": "repo_001",
-  "event_type": "BUILD_STARTED",
-  "event_timestamp": "2026-01-01T12:00:00Z",
-  "processing_timestamp": "2026-01-01T12:00:02Z",
-  "status": "SUCCESS"
-}
-```
-
 ## Tests
 
 ```bash
 python -m pytest
 ```
 
-Current suite covers DORA metric calculations, out-of-order event handling,
-alert rules, event-schema normalization, and prediction output bounds.
-
 ## Project Map
 
-- `kafka/event_generator/` synthetic event generation and Kafka publishing.
 - `flink/jobs/` PyFlink SQL streaming job.
 - `services/` shared metric, schema, alert, and prediction logic.
 - `backend/api/` Flask JSON API for observability views.
@@ -131,3 +65,4 @@ alert rules, event-schema normalization, and prediction output bounds.
 - `monitoring/` Prometheus and Grafana assets.
 - `docs/architecture.md` architecture diagram.
 - `docs/performance_evaluation_report.md` evaluation template.
+
