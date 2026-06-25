@@ -15,7 +15,7 @@ pipeline {
         stage('Prepare Source') {
             steps {
                 sh '''
-                    cp -R /workspace/incident-management-app/. .
+                    cp -R /workspace/cicd-observability-flink-analytics/. .
                     rm -rf .git
                 '''
             }

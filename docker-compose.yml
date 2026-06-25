@@ -75,13 +75,13 @@ services:
     environment:
       JAVA_OPTS: -Djenkins.install.runSetupWizard=false
       JENKINS_ADMIN_USER: ${JENKINS_ADMIN_USER:-adithyanPrabhakaran.ie@gmail.com}
-      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:-Adirepo@0720}
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:-''}
       JENKINS_PIPELINE_JOB_NAME: smart-incident-platform-ci
     volumes:
       - jenkins_home:/var/jenkins_home
       - ./jenkins/init.groovy.d:/var/jenkins_home/init.groovy.d:ro
       - ./:/workspace/source:ro
-      - ../incident-management-app:/workspace/incident-management-app:ro
+      - ../cicd-observability-flink-analytics:/workspace/cicd-observability-flink-analytics:ro
 
   prometheus:
     image: prom/prometheus:v2.52.0
